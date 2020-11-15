@@ -22,7 +22,7 @@ if ($user -ne ""){​​​​​
     Set-ADUser  $userccount -Description "Disabled per ticket #286337"
     
     #Remove all memberships
-    Get-ADUser  $userccount -Properties MemberOf | Select -Expand MemberOf | ​​​​​%{Remove-ADGroupMember -Confirm:$false -verbose $_ -member "$userccount"}​​​​
+    Get-ADUser  $userccount -Properties MemberOf | Select -Expand MemberOf | ​​​​​%{Remove-ADGroupMember -Confirm:$false -verbose $_ -members "$userccount"}​​​​
     
     #Check user for report 
     $report += Get-ADUser  $userccount -Properties * | Select-Object office, manager, department, title
