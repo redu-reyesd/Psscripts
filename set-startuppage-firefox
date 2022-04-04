@@ -1,0 +1,33 @@
+try {
+
+  $path_Firefox = $env:appdata + '\Mozilla\Firefox\Profiles\'
+  #$path_Firefox =  $path_Firefox = $path_Firefox  + (ls $path_Firefox | where name -Like '*.default' | select Name).Name
+
+  #loops through all child directories inside $env:appdata + '\Mozilla\Firefox\Profiles\'
+  foreach ($item in Get-ChildItem -Path $path_Firefox ) {
+    #concats prefs.js to each child directory inside  $env:appdata + '\Mozilla\Firefox\Profiles\'
+    $new_path = $path_Firefox + $item.Name + "\prefs.js"
+
+    if ( Test-Path -Path $new_path ) {
+      # test if the absolute path exists
+      if ( Get-Item $new_path | Select-String -Pattern '"browser.startup.homepage",' ) {
+        #if the absolute path exists replace the value for 'user_pref("browser.startup.homepage" and adds the desire value
+        #Add-Content $new_path  'user_pref("browser.startup.homepage","https://www.facebook.com/");' 
+        $current_homepage = Get-Item $new_path | Select-String -Pattern '"browser.startup.homepage",' 
+          (Get-Content $new_path).Replace($current_homepage.line, 'user_pref("browser.startup.homepage","https://www.facebook.com/");' ) | Set-Content $new_path 
+        #override prefs.js file
+        echo "File successfully written"
+      }
+      else {
+        Add-Content $new_path  'user_pref("browser.startup.homepage","https://www.google.com/");' 
+        echo "File successfully written"
+      }
+
+    }    
+
+  }
+
+}
+catch {
+  "An error has occured, firefox not installed int this pc"
+}
